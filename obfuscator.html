@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="str">
+  <ul style="display: inline-block">
+    <li>
+      <label class="container">Удаление однострочных комментариев
+        <input type="checkbox" id="singleCom">
+        <span class="checkmark"></span>
+      </label>
+    </li>
+    <li>
+      <label class="container">Удаление многострочных комментариев
+        <input type="checkbox" id="multiCom">
+        <span class="checkmark"></span>
+      </label>
+    </li>
+    <li>
+      <label class="container">Переименование переменных
+        <input type="checkbox" id="renameVar">
+        <span class="checkmark"></span>
+      </label>
+    </li>
+    <li>
+      <label class="container">Удаление форматирования
+        <input type="checkbox" id="whiteSp">
+        <span class="checkmark"></span>
+      </label>
+    </li>
+    <li>
+      <label class="container">Добавление dead-кода
+        <input type="checkbox" id="deadCode">
+        <span class="checkmark"></span>
+      </label>
+    </li>
+    <li>
+      <label class="container">Преобразование if-else
+        <input type="checkbox" id="ifelse">
+        <span class="checkmark"></span>
+      </label>
+    </li>
+    <li>
+      <label class="container">Выбрать все
+        <input type="checkbox" id="all">
+        <span class="checkmark"></span>
+      </label>
+    </li>
+  </ul>
+
+  <button onclick="readFile(document.getElementById('file'))" id="obf" disabled>
+    Обфусцировать
+  </button>
+</div>
+
+  <p class="field">
+    <label class="custom-file-upload">
+      <input type="file" id="file"/>
+      <i class="fa fa-cloud-upload"></i> Загрузить файл
+    </label>
+    <label for="file" id="label">Выбрать файл</label>
+     <textarea
+        name="comment"
+        rows=10
+        cols=70
+        disabled
+        >
+     </textarea>
+  </p>
+  <p class="field">
+    <a href="javascript:void(0)" id="dlbtn">
+      <button id="save" disabled>Сохранить файл</button>
+    </a>
+
+    <div class="tab">
+      <button class="tablinks" onclick="openTab(event, 'comment2')" id='comment2tab'>Обфусцированный файл</button>
+      <button class="tablinks" onclick="openTab(event, 'metadata')">Метаданные</button>
+    </div>
+
+    <div class='tabtext'>
+      <textarea
+        name="comment2"
+        class="tabcontent"
+        rows=10
+        cols=70
+        disabled
+        >
+      </textarea>
+      <textarea
+        name="metadata"
+        class="tabcontent"
+        rows=10
+        cols=70
+        disabled
+        >
+      </textarea>
+    </div>
+
+  </p>
+
+
+</body>
+<script src="obfuscator.js"></script>
+</html>
