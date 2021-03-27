@@ -1,3 +1,12 @@
+export const deleteWhitespaces = (str) =>{ //функция, удаляющая лишние пробельные символы
+  return str.replace(/\s+/g,' ');
+}
+
+export const deleteMultilineСomments = (str) =>{ //функция, удаляющая многострочные комментарии
+  return str.replace(/(\/\*(?:(?!\*\/).|[\n\r])*\*\/)/g,'');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
 var sCom = document.querySelector('#singleCom');
 var mCom = document.querySelector('#multiCom');
 var rVar = document.querySelector('#renameVar');
@@ -7,6 +16,14 @@ var ifelse = document.querySelector('#ifelse');
 var all = document.querySelector('#all');
 
 document.querySelector("#comment2tab").click();
+
+document.querySelector("#comment2tab").addEventListener("click", function () {
+  openTab("click", 'comment2');
+});
+
+document.querySelector("#metadatabtn").addEventListener("click", function () {
+  openTab("click", 'metadata')
+});
 
 function create(text, name, type) {
   var dlbtn = document.getElementById("dlbtn");
@@ -124,13 +141,6 @@ const deleteSinglelineСomments = (str) =>{ //функция, удаляющая
 return str;
 };
 
-  const deleteMultilineСomments = (str) =>{ //функция, удаляющая многострочные комментарии
-    return str.replace(/(\/\*(?:(?!\*\/).|[\n\r])*\*\/)/g,'');
-  }
-
-  const deleteWhitespaces = (str) =>{ //функция, удаляющая лишние пробельные символы
-    return str.replace(/\s+/g,' ');
-  }
 
   let oldVars, newVars;
   const renameVariables = (str) =>{ //функция переименования переменных (рандомная буква плюс рандомное трехзначное число)
@@ -311,8 +321,6 @@ const makeDeadCodeInjection = (str) => {
 reader.readAsText(file);
 }
 
-
-
 function openTab(evt, tabName) {
   // Declare all variables
   var i, tabcontent, tablinks;
@@ -333,3 +341,4 @@ function openTab(evt, tabName) {
   document.getElementsByName(tabName)[0].style.display = "block";
   evt.currentTarget.className += " active";
 }
+})

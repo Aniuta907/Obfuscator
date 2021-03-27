@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  	<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
   <div class="str">
@@ -76,8 +76,8 @@
     </a>
 
     <div class="tab">
-      <button class="tablinks" onclick="openTab(event, 'comment2')" id='comment2tab'>Обфусцированный файл</button>
-      <button class="tablinks" onclick="openTab(event, 'metadata')">Метаданные</button>
+      <button class="tablinks" id='comment2tab'>Обфусцированный файл</button>
+      <button class="tablinks" id='metadatabtn'>Метаданные</button>
     </div>
 
     <div class='tabtext'>
@@ -100,8 +100,6 @@
     </div>
 
   </p>
-
-
 </body>
-<script src="obfuscator.js"></script>
+<script src="obfuscator.js" type="module"></script>
 </html>
