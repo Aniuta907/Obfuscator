@@ -6,6 +6,69 @@ export const deleteMultilineСomments = (str) =>{ //функция, удаляю
   return str.replace(/(\/\*(?:(?!\*\/).|[\n\r])*\*\/)/g,'');
 }
 
+export const deleteSinglelineСomments = (str) =>{ //функция, удаляющая однострочные комментарии
+  let commas = false; //есть ли кавычка в строке
+
+  for (let i = 0;i < str.length; i++){
+    if ((str[i] == "\"") && (commas == false)){//нашли кавычку и ее еще не было
+      commas = true;
+      continue;
+    }
+
+    if ((str[i] == "\"") &&(str[i+1] == "\"") &&(commas == true)){//нашли кавычку и она уже была
+       commas = false;
+       i++;
+       continue;
+     }
+
+   if ((str[i] == "\"") && (commas == true)){//нашли кавычку и она уже была
+      commas = false;
+      continue;
+    }
+
+   if ((str[i] == "\/") && (str[i+1] == "\/")){ //нашли "//"
+    if (commas == false) {//кавычки до этого не было
+      for (let j = i + 2; j < str.length; j++){
+        if ((str[j] == "\n")){ //находим перевод строки
+            str = str.slice(0, i) + str.substring(j, str.length);//удаляем, начиная с "//" и до перевода строки
+          break;
+        }
+      }
+    }
+    else { //кавычка до этого была найдена, значит это не комментарий
+      for (let j = i + 2; j < str.length; j++)
+        if (str[j] == "\""){ //находим закрывающую кавычку
+          commas = false;
+          i = j+1; //продолжаем идти по циклу после индекса второй кавычки
+          break;
+        }
+  }
+}
+}
+return str;
+};
+
+export const makeDeadCodeInjection = (str) => {
+  const deadCode = [ // массив с пустым кодом (ничего не возвращает, операции выполняются в пустоту)
+    '\nisNaN(5879 + 0/0 - "adfggdb" + 111); \n\nparseInt("20111993 + 20111993 - 20111993/3 + 20111993.5"); \nparseFloat("0907.1996 * 0.3546 * 1.99"); \nisFinite("31121993 / 3/14 * 7.5 ");',
+    '\nparseInt("20111993 + 20111993 - 20111993/3 + 20111993.5"); \n\nparseFloat("0907.1996 * 0.3546 * 1.99"); \nisFinite("31121993 / 3/14 * 7.5 "); \nisNaN(5879 + 0/0 - "adfggdb" + 111);',
+    '\nparseFloat("0907.1996 * 0.3546 * 1.99"); \n\nisNaN(5879 + 0/0 - "adfggdb" + 111); \nisFinite("31121993 / 3/14 * 7.5 "); \n\nparseInt("20111993 + 20111993 - 20111993/3 + 20111993.5");',
+  ];
+
+  const array = str.split(';'); // разбиваем строку на массив строк по ;
+  let randomI;
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].trim().startsWith("let") || array[i].trim().startsWith("const")) { // если строка начинается с let или const
+      randomI = Math.floor(Math.random() * deadCode.length); // рандомное число из 0, 1, 2
+      array.splice( i, 0, "\n" + deadCode[randomI]); // вставляем после данной строки пустой код
+      i++; // прибавляем к индексу 1, чтобы перескочить через пустую строчку, которую вставили выше
+    }
+  }
+
+  const newstr = array.join('; ');
+  return newstr;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 var sCom = document.querySelector('#singleCom');
 var mCom = document.querySelector('#multiCom');
@@ -101,49 +164,6 @@ reader.onload = function(event) {
     return;
   }
    document.getElementsByName("comment")[0].innerHTML = content;
-
-const deleteSinglelineСomments = (str) =>{ //функция, удаляющая однострочные комментарии
-  let commas = false; //есть ли кавычка в строке
-
-  for (let i = 0;i < str.length; i++){
-    if ((str[i] == "\"") && (commas == false)){//нашли кавычку и ее еще не было
-      commas = true;
-      continue;
-    }
-
-    if ((str[i] == "\"") &&(str[i+1] == "\"") &&(commas == true)){//нашли кавычку и она уже была
-       commas = false;
-       i++;
-       continue;
-     }
-
-   if ((str[i] == "\"") && (commas == true)){//нашли кавычку и она уже была
-      commas = false;
-      continue;
-    }
-
-   if ((str[i] == "\/") && (str[i+1] == "\/")){ //нашли "//"
-    if (commas == false) {//кавычки до этого не было
-      for (let j = i + 2; j < str.length; j++){
-        if ((str[j] == "\n")){ //находим перевод строки
-            str = str.slice(0, i) + str.substring(j, str.length);//удаляем, начиная с "//" и до перевода строки
-          break;
-        }
-      }
-    }
-    else { //кавычка до этого была найдена, значит это не комментарий
-      for (let j = i + 2; j < str.length; j++)
-        if (str[j] == "\""){ //находим закрывающую кавычку
-          commas = false;
-          i = j+1; //продолжаем идти по циклу после индекса второй кавычки
-          break;
-        }
-  }
-}
-}
-return str;
-};
-
 
   let oldVars, newVars;
   const renameVariables = (str) =>{ //функция переименования переменных (рандомная буква плюс рандомное трехзначное число)
@@ -249,27 +269,6 @@ return str;
         return str;
   }
 
-const makeDeadCodeInjection = (str) => {
-  const deadCode = [ // массив с пустым кодом (ничего не возвращает, операции выполняются в пустоту)
-    '\nisNaN(5879 + 0/0 - "adfggdb" + 111); \n\nparseInt("20111993 + 20111993 - 20111993/3 + 20111993.5"); \nparseFloat("0907.1996 * 0.3546 * 1.99"); \nisFinite("31121993 / 3/14 * 7.5 ");',
-    '\nparseInt("20111993 + 20111993 - 20111993/3 + 20111993.5"); \n\nparseFloat("0907.1996 * 0.3546 * 1.99"); \nisFinite("31121993 / 3/14 * 7.5 "); \nisNaN(5879 + 0/0 - "adfggdb" + 111); ',
-    '\nparseFloat("0907.1996 * 0.3546 * 1.99"); \n\nisNaN(5879 + 0/0 - "adfggdb" + 111); \nisFinite("31121993 / 3/14 * 7.5 "); \n\nparseInt("20111993 + 20111993 - 20111993/3 + 20111993.5");',
-  ];
-
-  const array = str.split(';'); // разбиваем строку на массив строк по ;
-  let randomI;
-  for (let i = 0; i < array.length; i++) {
-    if (array[i].trim().startsWith("let") || array[i].trim().startsWith("const")) { // если строка начинается с let или const
-      randomI = Math.floor(Math.random() * deadCode.length); // рандомное число из 0, 1, 2
-      array.splice( i, 0, "\n" + deadCode[randomI]); // вставляем после данной строки пустой код
-      i++; // прибавляем к индексу 1, чтобы перескочить через пустую строчку, которую вставили выше
-    }
-  }
-
-  const newstr = array.join('; ');
-  return newstr;
-}
-
   let newcontent = content;
 
   if (all.checked) {
@@ -294,7 +293,6 @@ const makeDeadCodeInjection = (str) => {
    if (wSp.checked)
        newcontent = deleteWhitespaces(newcontent);
   }
-
 
   document.querySelector('#save').disabled = false;
   document.getElementsByName("comment2")[0].innerHTML = newcontent;
