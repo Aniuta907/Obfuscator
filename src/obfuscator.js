@@ -15,14 +15,12 @@ var deadC = document.querySelector('#deadCode');
 var ifelse = document.querySelector('#ifelse');
 var all = document.querySelector('#all');
 
-document.querySelector("#comment2tab").click();
-
 document.querySelector("#comment2tab").addEventListener("click", function () {
-  openTab("click", 'comment2');
+  openTab(event, 'comment2');
 });
 
 document.querySelector("#metadatabtn").addEventListener("click", function () {
-  openTab("click", 'metadata')
+  openTab(event, 'metadata');
 });
 
 function create(text, name, type) {
@@ -82,6 +80,11 @@ wSp.onchange = listenAllChecked;
 deadC.onchange = listenAllChecked;
 ifelse.onchange = listenAllChecked;
 
+document.getElementById('obf').addEventListener("click", function () {
+  readFile(document.getElementById('file'));
+  document.getElementById("comment2tab").click();
+});
+
 function readFile(object) {
 let file = object.files[0];
 let metadata = "Размер исходного файла: " + file.size + " кб\n";
@@ -102,7 +105,7 @@ reader.onload = function(event) {
 const deleteSinglelineСomments = (str) =>{ //функция, удаляющая однострочные комментарии
   let commas = false; //есть ли кавычка в строке
 
-  for (i = 0;i < str.length; i++){
+  for (let i = 0;i < str.length; i++){
     if ((str[i] == "\"") && (commas == false)){//нашли кавычку и ее еще не было
       commas = true;
       continue;
@@ -121,7 +124,7 @@ const deleteSinglelineСomments = (str) =>{ //функция, удаляющая
 
    if ((str[i] == "\/") && (str[i+1] == "\/")){ //нашли "//"
     if (commas == false) {//кавычки до этого не было
-      for (j = i + 2; j < str.length; j++){
+      for (let j = i + 2; j < str.length; j++){
         if ((str[j] == "\n")){ //находим перевод строки
             str = str.slice(0, i) + str.substring(j, str.length);//удаляем, начиная с "//" и до перевода строки
           break;
@@ -129,7 +132,7 @@ const deleteSinglelineСomments = (str) =>{ //функция, удаляющая
       }
     }
     else { //кавычка до этого была найдена, значит это не комментарий
-      for (j = i + 2; j < str.length; j++)
+      for (let j = i + 2; j < str.length; j++)
         if (str[j] == "\""){ //находим закрывающую кавычку
           commas = false;
           i = j+1; //продолжаем идти по циклу после индекса второй кавычки
@@ -170,7 +173,7 @@ return str;
 
         const substrSearch = (target) => {//поиск индексов всех вхождений подстроки в строку
             let arrsubstr = [];
-            k = 0;
+            let k = 0;
             var pos = -1;
             while ((pos = str.indexOf(target, pos + 1)) != -1) {
               arrsubstr[k] = pos;
@@ -188,7 +191,7 @@ return str;
         const identifSearch = (stroka) => {
             len = stroka.length;
             arr = substrSearch(stroka);
-            for (i = 0; i < arr.length; i++){
+            for (let i = 0; i < arr.length; i++){
               let identif = "";
               let newidentif = "";
               let flag = false;
@@ -321,7 +324,7 @@ const makeDeadCodeInjection = (str) => {
 reader.readAsText(file);
 }
 
-function openTab(evt, tabName) {
+function openTab(event, tabName) {
   // Declare all variables
   var i, tabcontent, tablinks;
 
@@ -339,6 +342,6 @@ function openTab(evt, tabName) {
 
   // Show the current tab, and add an "active" class to the button that opened the tab
   document.getElementsByName(tabName)[0].style.display = "block";
-  evt.currentTarget.className += " active";
+  event.currentTarget.className += " active";
 }
 })
