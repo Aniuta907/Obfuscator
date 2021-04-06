@@ -1,45 +1,45 @@
-export const deleteWhitespaces = (str) =>{ //функция, удаляющая лишние пробельные символы
+export const deleteWhitespaces = (str) =>{
   return str.replace(/\s+/g,' ');
 }
 
-export const deleteMultilineСomments = (str) =>{ //функция, удаляющая многострочные комментарии
+export const deleteMultilineСomments = (str) =>{
   return str.replace(/(\/\*(?:(?!\*\/).|[\n\r])*\*\/)/g,'');
 }
 
-export const deleteSinglelineСomments = (str) =>{ //функция, удаляющая однострочные комментарии
-  let commas = false; //есть ли кавычка в строке
+export const deleteSinglelineСomments = (str) =>{
+  let commas = false;
 
   for (let i = 0;i < str.length; i++){
-    if ((str[i] == "\"") && (commas == false)){//нашли кавычку и ее еще не было
+    if ((str[i] == "\"") && (commas == false)){
       commas = true;
       continue;
     }
 
-    if ((str[i] == "\"") &&(str[i+1] == "\"") &&(commas == true)){//нашли кавычку и она уже была
+    if ((str[i] == "\"") &&(str[i+1] == "\"") &&(commas == true)){
        commas = false;
        i++;
        continue;
      }
 
-   if ((str[i] == "\"") && (commas == true)){//нашли кавычку и она уже была
+   if ((str[i] == "\"") && (commas == true)){
       commas = false;
       continue;
     }
 
-   if ((str[i] == "\/") && (str[i+1] == "\/")){ //нашли "//"
-    if (commas == false) {//кавычки до этого не было
+   if ((str[i] == "\/") && (str[i+1] == "\/")){
+    if (commas == false) {
       for (let j = i + 2; j < str.length; j++){
-        if ((str[j] == "\n")){ //находим перевод строки
-            str = str.slice(0, i) + str.substring(j, str.length);//удаляем, начиная с "//" и до перевода строки
+        if ((str[j] == "\n")){
+            str = str.slice(0, i) + str.substring(j, str.length);
           break;
         }
       }
     }
-    else { //кавычка до этого была найдена, значит это не комментарий
+    else {
       for (let j = i + 2; j < str.length; j++)
-        if (str[j] == "\""){ //находим закрывающую кавычку
+        if (str[j] == "\""){
           commas = false;
-          i = j+1; //продолжаем идти по циклу после индекса второй кавычки
+          i = j+1;
           break;
         }
   }
@@ -49,24 +49,128 @@ return str;
 };
 
 export const makeDeadCodeInjection = (str) => {
-  const deadCode = [ // массив с пустым кодом (ничего не возвращает, операции выполняются в пустоту)
+  const deadCode = [
     '\nisNaN(5879 + 0/0 - "adfggdb" + 111); \n\nparseInt("20111993 + 20111993 - 20111993/3 + 20111993.5"); \nparseFloat("0907.1996 * 0.3546 * 1.99"); \nisFinite("31121993 / 3/14 * 7.5 ");',
     '\nparseInt("20111993 + 20111993 - 20111993/3 + 20111993.5"); \n\nparseFloat("0907.1996 * 0.3546 * 1.99"); \nisFinite("31121993 / 3/14 * 7.5 "); \nisNaN(5879 + 0/0 - "adfggdb" + 111);',
     '\nparseFloat("0907.1996 * 0.3546 * 1.99"); \n\nisNaN(5879 + 0/0 - "adfggdb" + 111); \nisFinite("31121993 / 3/14 * 7.5 "); \n\nparseInt("20111993 + 20111993 - 20111993/3 + 20111993.5");',
   ];
 
-  const array = str.split(';'); // разбиваем строку на массив строк по ;
+  const array = str.split(';');
   let randomI;
   for (let i = 0; i < array.length; i++) {
-    if (array[i].trim().startsWith("let") || array[i].trim().startsWith("const")) { // если строка начинается с let или const
-      randomI = Math.floor(Math.random() * deadCode.length); // рандомное число из 0, 1, 2
-      array.splice( i, 0, "\n" + deadCode[randomI]); // вставляем после данной строки пустой код
-      i++; // прибавляем к индексу 1, чтобы перескочить через пустую строчку, которую вставили выше
+    if (array[i].trim().startsWith("let") || array[i].trim().startsWith("const")) { 
+      randomI = Math.floor(Math.random() * deadCode.length);
+      array.splice( i, 0, "\n" + deadCode[randomI]);
+      i++;
     }
   }
 
   const newstr = array.join('; ');
   return newstr;
+}
+
+export const randomInteger = (min, max) => {
+  var rand = min - 0.5 + Math.random() * (max - min + 1)
+  rand = Math.round(rand);
+  return rand;
+}
+
+let oldVars, newVars;
+
+export function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+export function isLetter(c) {
+  return c.toLowerCase() != c.toUpperCase();
+}
+
+export const renameVariables = (str) =>{
+  const makeid = () => {
+      var text = "";
+      var possible = "abcdefghijklmnopqrstuvwxyz";
+
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      return text;
+  }
+
+    const substrSearch = (target) => {
+        let arrsubstr = [];
+        let k = 0;
+        var pos = -1;
+        while ((pos = str.indexOf(target, pos + 1)) != -1) {
+          arrsubstr[k] = pos;
+          k++;
+        }
+        return arrsubstr;
+    }
+
+    let oldVarArray = [];
+    let arrvariab = [];
+    let variabnumber = 0;
+    let arr = [];
+    let len = -1;
+
+    const identifSearch = (stroka) => {
+        len = stroka.length;
+        arr = substrSearch(stroka);
+        for (let i = 0; i < arr.length; i++){
+          let identif = "";
+          let newidentif = "";
+          let flag = false;
+          let idindex = -1;
+          let idIndexArr = [];
+          let h=0;
+
+          for (let j = arr[i]+len; j < str.length; j++)
+              if (str[j]==" ")
+                h++;
+              else break;
+
+          for (let j = arr[i]+len+h; j < str.length; j++)
+            if ((str[j] != ".") && (str[j] != " ") && (str[j] != "=") && (str[j] != ";") && (str[j] != "(") && (str[j] != ")") && (str[j] != "\"") &&(str[j] != "[") &&(str[j] != "]"))
+              identif += str[j];
+            else break;
+
+          if (identif != ""){
+            do{
+              newidentif = makeid() + randomInteger(100, 999);
+              if (arrvariab.indexOf(newidentif) == -1){
+
+              idIndexArr = substrSearch(identif);
+
+              for (let ii = 0; ii < idIndexArr.length; ii++){
+                idindex = idIndexArr[ii];
+
+              if ((isLetter(str.charAt(idindex - 1)) != true)&&(str.charAt(idindex - 1)!="$")&&(str.charAt(idindex - 1)!="_"))
+              if ((isLetter(str.charAt(idindex + identif.length)) != true) &&(str.charAt(idindex + identif.length)!="$")&&(str.charAt(idindex + identif.length)!="_")&&(isNumber(str.charAt(idindex + identif.length)))!=true)
+                {
+                  str = str.slice(0, idindex) + newidentif + str.slice(idindex + identif.length);
+                  idIndexArr = substrSearch(identif);
+                  ii--;
+                }
+              }
+                arrvariab[variabnumber] = newidentif;
+                oldVarArray[variabnumber] = identif;
+                variabnumber++;
+                flag = true;
+              }
+
+            } while (flag == false);
+        }
+          arr = substrSearch(stroka);
+        }
+    }
+    identifSearch("let ");
+    identifSearch("var ");
+    identifSearch("const ");
+    identifSearch("function ");
+
+    oldVars = oldVarArray;
+    newVars = arrvariab;
+
+    return str;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -165,110 +269,6 @@ reader.onload = function(event) {
   }
    document.getElementsByName("comment")[0].innerHTML = content;
 
-  let oldVars, newVars;
-  const renameVariables = (str) =>{ //функция переименования переменных (рандомная буква плюс рандомное трехзначное число)
-
-      const randomInteger = (min, max) => {//функция генерации случайного целого числа между min и max, включая min, max как возможные значения.
-          var rand = min - 0.5 + Math.random() * (max - min + 1)
-          rand = Math.round(rand);
-          return rand;
-      }
-
-      const makeid = () => {//функция генерации случайной буквы
-          var text = "";
-          var possible = "abcdefghijklmnopqrstuvwxyz";
-
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-          return text;
-      }
-
-      function isLetter(c) {
-      return c.toLowerCase() != c.toUpperCase();
-    }
-
-    function isNumber(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-    }
-
-        const substrSearch = (target) => {//поиск индексов всех вхождений подстроки в строку
-            let arrsubstr = [];
-            let k = 0;
-            var pos = -1;
-            while ((pos = str.indexOf(target, pos + 1)) != -1) {
-              arrsubstr[k] = pos;
-              k++;
-            }
-            return arrsubstr;
-        }
-
-        let oldVarArray = [];
-        let arrvariab = [];//массив, в котором храним новые имена переменных
-        let variabnumber = 0;//количество новых имен переменных
-        let arr = []; //массив индексов всех вхождений подстроки в строку
-        let len = -1;
-
-        const identifSearch = (stroka) => {
-            len = stroka.length;
-            arr = substrSearch(stroka);
-            for (let i = 0; i < arr.length; i++){
-              let identif = "";
-              let newidentif = "";
-              let flag = false;
-              let idindex = -1;
-              let idIndexArr = [];
-              let h=0;
-
-              for (let j = arr[i]+len; j < str.length; j++)
-                  if (str[j]==" ")
-                    h++;
-                  else break;
-
-              for (let j = arr[i]+len+h; j < str.length; j++)
-                if ((str[j] != ".") && (str[j] != " ") && (str[j] != "=") && (str[j] != ";") && (str[j] != "(") && (str[j] != ")") && (str[j] != "\"") &&(str[j] != "[") &&(str[j] != "]"))
-                  identif += str[j];
-                else break;
-
-              if (identif != ""){
-                do{
-                  newidentif = makeid() + randomInteger(100, 999);
-                  if (arrvariab.indexOf(newidentif) == -1){
-
-                  idIndexArr = substrSearch(identif);
-
-                  for (let ii = 0; ii < idIndexArr.length; ii++){
-                    idindex = idIndexArr[ii];
-
-                  if ((isLetter(str.charAt(idindex - 1)) != true)&&(str.charAt(idindex - 1)!="$")&&(str.charAt(idindex - 1)!="_"))
-                  if ((isLetter(str.charAt(idindex + identif.length)) != true) &&(str.charAt(idindex + identif.length)!="$")&&(str.charAt(idindex + identif.length)!="_")&&(isNumber(str.charAt(idindex + identif.length)))!=true)
-                    {
-                      str = str.slice(0, idindex) + newidentif + str.slice(idindex + identif.length);
-                      idIndexArr = substrSearch(identif);
-                      ii--;
-                    }
-                  }
-                    arrvariab[variabnumber] = newidentif;
-                    oldVarArray[variabnumber] = identif;
-                    variabnumber++;
-                    flag = true;
-                  }
-
-                } while (flag == false);
-            }
-              arr = substrSearch(stroka);
-            }
-        }
-        identifSearch("let ");
-        identifSearch("var ");
-        identifSearch("const ");
-        identifSearch("function ");
-
-        oldVars = oldVarArray;
-        newVars = arrvariab;
-
-        return str;
-  }
-
   let newcontent = content;
 
   if (all.checked) {
@@ -297,7 +297,7 @@ reader.onload = function(event) {
   document.querySelector('#save').disabled = false;
   document.getElementsByName("comment2")[0].innerHTML = newcontent;
 
-  function getFileSize(newcontent) {//функция получения размера обфусцированного файла
+  function getFileSize(newcontent) {
      var promise = new Promise(function(resolve, reject) {
        window.setTimeout(function() {
          const fileSize = create(newcontent, 'file.js', 'application/javascript');
@@ -323,22 +323,18 @@ reader.readAsText(file);
 }
 
 function openTab(event, tabName) {
-  // Declare all variables
   var i, tabcontent, tablinks;
 
-  // Get all elements with class="tabcontent" and hide them
   tabcontent = document.getElementsByClassName("tabcontent");
   for (i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = "none";
   }
 
-  // Get all elements with class="tablinks" and remove the class "active"
   tablinks = document.getElementsByClassName("tablinks");
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
 
-  // Show the current tab, and add an "active" class to the button that opened the tab
   document.getElementsByName(tabName)[0].style.display = "block";
   event.currentTarget.className += " active";
 }
